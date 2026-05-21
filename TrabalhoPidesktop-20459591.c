@@ -1,6 +1,7 @@
-#include<stdio.h>
-#include<windows.h>
-#include<ctype.h>
+#include <stdio.h>
+#include <windows.h>
+#include <ctype.h>
+#include <string.h>
 
 #define MAXTAM 50
 
@@ -13,31 +14,31 @@ char email[50];
 typedef struct{
 Pessoa dados;
 char dataVenc[20];
-int ativo;
+char ativo;
 } Socio;
 
 typedef struct{
 Pessoa dados;
 char empresa[50];
-} fornecedor;
+} Fornecedor;
 
 typedef struct{
 int id;
 char nomeMarca[50];
-} marca;
+} Marca;
 
 typedef struct{
 int id;
 char nomeCat[50];
-} categoria;
+} Categoria;
 
 typedef struct{
 int id;
 char nomeProd[50];
 int estoque;
 float preco;
-marca m;
-categoria c;
+Marca m;
+Categoria c;
 } Produto;
 
 typedef struct{
@@ -73,9 +74,10 @@ scanf("%d",&opcao);
 return opcao;
 }
 
-void Cadastro_socio {
+void Cadastro_socio() {
 	FILE *arq;
 	Socio s;
+	int pos; 
 	arq = fopen("cortefino.bin","ab+");
 	if(arq == NULL){
 		printf("\nErro no arquivo");
@@ -85,33 +87,34 @@ void Cadastro_socio {
 			system("cls");
 			printf("\nNome: ");fflush(stdin);
 			gets(s.dados.nome);
-			pos=busca(arq,s.dados.nome);
-			if(pos==-1){
+			pos = busca(arq,s.dados.nome);
+			if(pos== -1){
 				printf("\nTelefone: ");fflush(stdin);
-				gets(s.dados.telefone).
+				gets(s.dados.telefone);
 				printf("\nEmail: ");fflush(stdin);
 				gets(s.dados.email);
 				printf("\nData de Vencimento da assinatura: ");fflush(stdin);
 				gets(s.dataVenc);
 				printf("\nAtivo(S/N): ");fflush(stdin);
-				scanf("%c",&s.ativo;)
-			}else{
+				scanf(" %c",&s.ativo);
+			}else {
 				fseek(arq,pos,0);
-				fread(&s,sizeof(Socio),1,arquivo);
+				fread(&s,sizeof(Socio),1,arq);
 				printf("\n %s ja esta cadastrad(a)o na agenda",s.dados.nome);
 				system("pause");
 			}
 			system("cls");
 			printf("\nDeseja continuar S/N? ");
 		
-		}while(toupper(getche())=='S');
+		}while(toupper(getch())=='S');
 		fclose(arq);
 	}
 }
 
-void Cadastro_fornecedor{
+void Cadastro_fornecedor() {
 	FILE *arq;
-	fornecedor f;
+	Fornecedor f;
+	int pos; 
 	arq = fopen("cortefino.bin","ab+");
 	if(arq == NULL){
 		printf("\nErro no arquivo");
@@ -122,15 +125,15 @@ void Cadastro_fornecedor{
 			gets(f.dados.nome);
 			pos=busca(arq,f.dados.nome);
 			if(pos==-1){
-				printf("\nTelefone: ");fflush(stdin);
-				gets(f.dados.telefone).
-				printf("\nEmail: ");fflush(stdin);
+				printf("\nTelefone: "); fflush(stdin);
+				gets(f.dados.telefone);
+				printf("\nEmail: "); fflush(stdin);
 				gets(f.dados.email);
-				printf("\nNome da Empresa: ");fflush(stdin);
-				gets(f.empresa;)
+				printf("\nNome da Empresa: ") ;fflush(stdin);
+				gets(f.empresa);
 			}else{
 				fseek(arq,pos,0);
-				fread(&f,sizeof(fornecedor),1,arquivo);
+				fread(&f, sizeof(Fornecedor), 1, arq);
 				printf("\n %s ja esta cadastrad(a)o na agenda",f.dados.nome);
 				system("pause");
 			}
@@ -138,47 +141,50 @@ void Cadastro_fornecedor{
 			printf("\nDeseja continuar S/N? ");
 		}while(toupper(getche())=='S');
 		fclose(arq);
-	
 	}
 }
 
-void Cadastro_produto{
+void Cadastro_produto() {
 	FILE *arq;
 	Produto p;
+	Fornecedor f; 
+	int pos; 
 	arq = fopen("cortefino.bin","ab+");
 	if(arq == NULL){
 		printf("\nErro no arquivo");
 	}else{
 		
-		do{
+		do {
 			system("cls");
 			printf("\nNome: ");fflush(stdin);
 			gets(p.nomeProd);
-			pos=busca(arq,f.dados.nome);
+			pos = busca(arq, f.dados.nome);
 			if(pos==-1){
 				printf("\nCodigo: ");
 				scanf("%d",&p.id);
 				printf("\nQuantidade no Estoque: ");
-				scanf("%d",&p.estoque;)
+				scanf("%d",&p.estoque);
 				printf("\nPreco: ");
 				scanf("%f",&p.preco);
 			}else{
 				fseek(arq,pos,0);
-				fread(&p,sizeof(Produto),1,arquivo);
+				fread(&p,sizeof(Produto),1,arq);
 				printf("\n %s ja esta cadastrad(a)o na agenda",p.nomeProd);
 				system("pause");
 			}
 			system("cls");
 			printf("\nDeseja continuar S/N? ");
-		}while(toupper(getche())=='S');
+		} while(toupper(getche())=='S');
 		fclose(arq);
 	
 	}
 }
 
-void Cadastro_marcas{
+void Cadastro_marcas() {
 	FILE *arq;
-	marca m;
+	Marca m;
+	char nomeBusca[50];
+	int pos; 
 	arq = fopen("cortefino.bin","ab+");
 	if(arq == NULL){
 		printf("\nErro no arquivo");
@@ -187,31 +193,44 @@ void Cadastro_marcas{
 		do{
 			system("cls");
 			printf("\nNome: ");fflush(stdin);
-			gets(m.nome);
-			pos=busca(arq,f.dados.nome);
-			if(pos==-1){
+			gets(nomeBusca);
+			pos = busca(arq,nomeBusca);
+			if(pos== -1){
 				printf("\nCodigo: ");
 				scanf("%d",&m.id);
-			}else{
+			}else {
 				fseek(arq,pos,0);
-				fread(&m,sizeof(marca),1,arquivo);
-				printf("\n %s ja esta cadastrad(a)o na agenda",m.nome);
+				fread(&m, sizeof(Marca), 1, arq);
+				printf("\n %s ja esta cadastrad(a)o na agenda", m.nomeMarca);
 				system("pause");
 			}
 			system("cls");
-			printf("\nDeseja continuar S/N? ");
-		}while(toupper(getche())=='S');
+			printf("\nDeseja continuar 'S'|| 'N' ? \n");
+		} while(toupper(getche())=='S');
 		fclose(arq);
 	
 	}
 }
 
+// ==> Busca
+int busca(FILE *arq, char nomeBusca[]) {
+	Marca m; 
+	int pos; 
+	rewind(arq); 
+	while(fread(&m, sizeof(Marca), 1, arq)) {
+		if(strcmp(m.nomeMarca, nomeBusca) ==0) {
+			pos = ftell(arq) - sizeof(Marca);
+		}
+	}
+	return -1; 
+}
 
-main(){
+
+int main(){
+
 int opcao;
-
-opcao = Menu();
 do{
+	opcao = Menu();
 	switch(opcao){
 		case 1:{
 			int submenu;
@@ -241,35 +260,35 @@ do{
 						
 						switch(opSocio){
 							case 1:{
-								cadastroSocio();
+								//cadastroSocio();
 								break;
 							}
 							case 2:{
-								ListarSocio();
+								//ListarSocio();
 								break;
 							}
 							case 3:{
-								BuscaSocio();
+								//BuscaSocio();
 								break;
 							}
 							case 4:{
-								Editar();
+								//Editar();
 								break;
 							}
 							case 5:{
-								Excluir();
+								//Excluir();
 								break;
 							}
 							case 6:{
-								AssinarSocio();
+								//AssinarSocio();
 								break;
 							}
 							case 7:{
-								RenovaAss();
+								//RenovaAss();
 								break;
 							}
 							case 8:{
-								VerificaVenc();
+								//VerificaVenc();
 								break;
 							}
 							default:{
@@ -277,8 +296,7 @@ do{
 								break;
 							}
 						}
-					}while(opSocio!=0);
-					
+					}while(opSocio != 0);
 					break;
 				}
 				case 2:{
@@ -296,32 +314,28 @@ do{
 						
 						switch(opFornecedor){
 							case 1:{
-								cadastroFornecedor();
+								//cadastroFornecedor();
 								break;
 							}
 							case 2:{
-								ListarFornecedor();
+								//ListarFornecedor();
 								break;
 							}
 							case 3:{
-								Buscar();
+								//Buscar();
 								break;
 							}
 							case 4:{
-								Editar();
+								//Editar();
 								break;
 							}
 							case 5:{
-								Excluir();
+								//Excluir();
 								break;
 							}
 						}	
 					}while(opFornecedor!=0);
-					
-					
 					break;
-					
-				
 				}
 				default:{
 					printf("\nOpcao invalida,digite novamente");
@@ -349,35 +363,35 @@ do{
 			
 					switch(opProd){
 						case 1:{
-							cadastroProduto();
+							//cadastroProduto();
 							break;
 						}
 						case 2:{
-							ListarProduto();
+							// ListarProduto();
 							break;
 						}
 						case 3:{
-							BuscaProduto();
+							//BuscaProduto();
 							break;
 						}
 						case 4:{
-							Editar();
+							// Editar();
 							break;
 						}
 						case 5:{
-							Excluir();
+							// Excluir();
 							break;
 						}
 						case 6:{
-							AtualizarEstoque();
+							// AtualizarEstoque();
 							break;
 						}
 						case 7:{
-							ProdutosCategoria();
+							// ProdutosCategoria();
 							break;
 						}
 						case 8:{
-							ProdutosMarca();
+							// ProdutosMarca();
 							break;
 						}
 						default:{
@@ -386,11 +400,12 @@ do{
 						}
 					}
 			
-			}while(opProd!=0);
+			}while(opProd != 0);
 								
 			break;
 		}
-		case 3:{
+		case 3: {
+			int opMarca;
 				printf("\n=== GERENCIAR MARCAS ===\n");
 				printf("\n1-Cadastrar marca\n");
 				printf("\n2-Listar marcas\n");
@@ -429,6 +444,7 @@ do{
 			break;
 		}
 		case 4:{
+			int opCat; 
 			printf("\n=== GERENCIAR CATEGORIAS ===\n");
 			printf("\n1-Cadastrar categoria\n");
 			printf("\n2-Listar categorias\n");
@@ -466,7 +482,8 @@ do{
 			}
 				break;
 		}
-		case 5:{
+		case 5: {
+			int opPed;
 			printf("\n=== PEDIDOS ===\n");
 			printf("\n1-Efetuar pedido\n");
 			printf("\n2-Listar pedidos\n");
@@ -520,7 +537,8 @@ do{
 			
 			break;
 		}
-		case 6:{
+		case 6: {
+			int opRel;
 			printf("\n=== RELATORIOS ===\n");
 			printf("\n1-Socios com assinatura vencendo\n");
 			printf("\n2-Produtos mais vendidos\n");
@@ -583,4 +601,5 @@ do{
 		}
 	}
 }while(opcao!=0);
+return 0; 
 }
