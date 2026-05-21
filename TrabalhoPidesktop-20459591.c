@@ -8,44 +8,37 @@ typedef struct{
 char nome[50];
 char telefone[50];
 char email[50];
-
-}Pessoa;
+} Pessoa;
 
 typedef struct{
 Pessoa dados;
 char dataVenc[20];
 int ativo;
-
-}Socio;
+} Socio;
 
 typedef struct{
 Pessoa dados;
 char empresa[50];
-
-}fornecedor;
+} fornecedor;
 
 typedef struct{
 int id;
 char nomeMarca[50];
-
-}marca;
+} marca;
 
 typedef struct{
 int id;
 char nomeCat[50];
-
-}categoria;
+} categoria;
 
 typedef struct{
 int id;
 char nomeProd[50];
 int estoque;
 float preco;
-
 marca m;
 categoria c;
-
-}Produto;
+} Produto;
 
 typedef struct{
 int cod;
@@ -53,15 +46,14 @@ int idSocio;
 char data[20];
 float total;
 int status;
-
-}Pedido;
+} Pedido;
 
 typedef struct{
 int cod;
 int idProduto;
 int quant;
 float subtotal;
-}ItemPedido;
+} ItemPedido;
 
 int Menu(){
 int opcao;
@@ -81,7 +73,7 @@ scanf("%d",&opcao);
 return opcao;
 }
 
-void Cadastro_socio{
+void Cadastro_socio {
 	FILE *arq;
 	Socio s;
 	arq = fopen("cortefino.bin","ab+");
