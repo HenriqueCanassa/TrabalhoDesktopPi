@@ -213,16 +213,89 @@ void Cadastro_marcas() {
 }
 
 // ==> Busca
-int busca(FILE *arq, char nomeBusca[]) {
+int buscaMarca(FILE *arq, char nomeBusca[]) {
 	Marca m; 
-	int pos; 
 	rewind(arq); 
-	while(fread(&m, sizeof(Marca), 1, arq)) {
-		if(strcmp(m.nomeMarca, nomeBusca) ==0) {
-			pos = ftell(arq) - sizeof(Marca);
-		}
+	fread(&m, sizeof(Marca), 1, arq);
+	while(!feof(arq) && strcmp(buscaMarca, m.nomeMarca)!= 0) {
+		fread(&m, sizeof(Marca), 1, arq);
 	}
-	return -1; 
+	if(!feof(arq)) {
+		return (ftell(arq) - sizeof(Marca));
+	} else {
+		return -1;
+	}
+}
+
+
+int buscaFornecedor(FILE *arq, char nomeFornecedor[]) {
+	Fornecedor F;
+	rewind(arq); 
+	fread(&F, sizeof(Fornecedor), 1, arq);
+		while(!feof(arq) && strcmp(buscaFornecedor, F.dados.nome)!= 0) {
+			fread(&F, sizeof(Fornecedor), 1, arq);
+		}
+		if(!feof(arq)) {
+			return (ftell(arq) - sizeof(Marca));
+		} else {
+			return -1;
+		}
+}
+
+int buscaSocio(FILE *arq, char nomeSocio[]) {
+	Socio S;
+	rewind(arq); 
+	fread(&S, sizeof(Socio), 1, arq);
+		while(!feof(arq) && strcmp(nomeSocio, S.dados.nome)!= 0) {
+			fread(&S, sizeof(Socio), 1, arq);
+		}
+		if(!feof(arq)) {
+			return (ftell(arq) - sizeof(Socio));
+		} else {
+			return -1;
+		}
+}
+
+int buscaProduto(FILE *arq, char nomeProduto[]) {
+	Produto P;
+	rewind(arq); 
+	fread(&S, sizeof(Produto), 1, arq);
+		while(!feof(arq) && strcmp(nomeProduto, S.dados.nome)!= 0) {
+			fread(&S, sizeof(Produto), 1, arq);
+		}
+		if(!feof(arq)) {
+			return (ftell(arq) - sizeof(Produto));
+		} else {
+			return -1;
+		}
+}
+
+int buscaPedido(FILE *arq, int cod) {
+	Pedido P;
+	rewind(arq); 
+	fread(&P, sizeof(Pedido), 1, arq);
+		while(!feof(arq) && cod == P.cod) {
+			fread(&P, sizeof(Pedido), 1, arq);
+		}
+		if(!feof(arq)) {
+			return (ftell(arq) - sizeof(Pedido));
+		} else {
+			return -1;
+		}
+}
+
+int buscaCategoria(FILE *arq, char nomeCategoria[]) {
+	Categoria C;
+	rewind(arq); 
+	fread(&C, sizeof(Categoria), 1, arq);
+		while(!feof(arq) && strcmp(nomeCategoria, C.nomeCat)!= 0) {
+			fread(&C, sizeof(Categoria), 1, arq);
+		}
+		if(!feof(arq)) {
+			return (ftell(arq) - sizeof(Categoria));
+		} else {
+			return -1;
+		}
 }
 
 
