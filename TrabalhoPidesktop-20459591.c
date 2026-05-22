@@ -87,7 +87,7 @@ void Cadastro_socio() {
 			system("cls");
 			printf("\nNome: ");fflush(stdin);
 			gets(s.dados.nome);
-			pos = busca(arq,s.dados.nome);
+			pos = buscaSocio(arq,s.dados.nome);
 			if(pos== -1){
 				printf("\nTelefone: ");fflush(stdin);
 				gets(s.dados.telefone);
@@ -217,7 +217,7 @@ int buscaMarca(FILE *arq, char nomeBusca[]) {
 	Marca m; 
 	rewind(arq); 
 	fread(&m, sizeof(Marca), 1, arq);
-	while(!feof(arq) && strcmp(buscaMarca, m.nomeMarca)!= 0) {
+	while(!feof(arq) && strcmp(nomeBusca, m.nomeMarca)!= 0) {
 		fread(&m, sizeof(Marca), 1, arq);
 	}
 	if(!feof(arq)) {
@@ -232,7 +232,7 @@ int buscaFornecedor(FILE *arq, char nomeFornecedor[]) {
 	Fornecedor F;
 	rewind(arq); 
 	fread(&F, sizeof(Fornecedor), 1, arq);
-		while(!feof(arq) && strcmp(buscaFornecedor, F.dados.nome)!= 0) {
+		while(!feof(arq) && strcmp(nomeFornecedor, F.dados.nome)!= 0) {
 			fread(&F, sizeof(Fornecedor), 1, arq);
 		}
 		if(!feof(arq)) {
@@ -259,9 +259,9 @@ int buscaSocio(FILE *arq, char nomeSocio[]) {
 int buscaProduto(FILE *arq, char nomeProduto[]) {
 	Produto P;
 	rewind(arq); 
-	fread(&S, sizeof(Produto), 1, arq);
-		while(!feof(arq) && strcmp(nomeProduto, S.dados.nome)!= 0) {
-			fread(&S, sizeof(Produto), 1, arq);
+	fread(&P, sizeof(Produto), 1, arq);
+		while(!feof(arq) && strcmp(nomeProduto, P.nomeProd)!= 0) {
+			fread(&P, sizeof(Produto), 1, arq);
 		}
 		if(!feof(arq)) {
 			return (ftell(arq) - sizeof(Produto));
