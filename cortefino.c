@@ -3,7 +3,6 @@
 #include <ctype.h>
 #include <string.h>
 #include <time.h>
-#include <conio.h>
 
 typedef struct {
     char nome[50];
@@ -23,12 +22,12 @@ typedef struct {
 } Fornecedor;
 
 typedef struct {
-    int  id;
+    int id;
     char nomeMarca[50];
 } Marca;
 
 typedef struct {
-    int  id;
+    int id;
     char nomeCat[50];
 } Categoria;
 
@@ -63,9 +62,11 @@ int Menu() {
     printf("\n***CORTE FINO***");
     printf("\n1-Gerenciar Pessoas");
     printf("\n2-Gerenciar Produtos");
-    printf("\n3-Pedidos");
-    printf("\n4-Relatorios");
-    printf("\n5-Exit");
+    printf("\n3-Gerenciar Marcas");
+    printf("\n4-Gerenciar Categorias");
+    printf("\n5-Pedidos");
+    printf("\n6-Relatorios");
+    printf("\n0-Exit");
     printf("\nQual opcao deseja: ");
     scanf("%d", &opcao);
     return opcao;
@@ -166,7 +167,7 @@ void Cadastro_socio() {
         }
         system("cls");
         printf("\nDeseja continuar S/N? ");
-    }while (toupper(getche()) == 'S');
+    } while (toupper(getche()) == 'S');
     fclose(arq);
 }
 
@@ -226,10 +227,7 @@ void Cadastro_produto() {
             scanf("%d", &p.estoque);
             printf("\nPreco: ");
             scanf("%f", &p.preco);
-            printf("\nDigite a marca: ");fflush(stdin);
-            gets(p.m.nomeMarca);
-            printf("\nDigite a categoria do produto: ");fflush(stdin);
-            gets(p.c.nomeCat);
+            fseek(arq, 0, SEEK_END);
             fwrite(&p, sizeof(Produto), 1, arq);
         } else {
             fseek(arq, pos, 0);
@@ -246,6 +244,7 @@ void Cadastro_produto() {
 void Cadastro_marcas() {
     FILE *arq;
     Marca m;
+    char nomeBusca[50];
     int pos;
     arq = fopen("marcas.bin", "ab+");
     if (arq == NULL) {
@@ -254,18 +253,19 @@ void Cadastro_marcas() {
     }
     do {
         system("cls");
-        printf("\nNome da marca: "); fflush(stdin);
-        gets(m.nomeMarca);
-        pos = buscaMarca(arq, m.nomeMarca);
+        printf("\nNome: "); fflush(stdin);
+        gets(nomeBusca);
+        pos = buscaMarca(arq, nomeBusca);
         if (pos == -1) {
-            printf("\nID da marca: ");
+            strcpy(m.nomeMarca, nomeBusca);
+            printf("\nCodigo: ");
             scanf("%d", &m.id);
             fseek(arq, 0, SEEK_END);
             fwrite(&m, sizeof(Marca), 1, arq);
         } else {
             fseek(arq, pos, 0);
             fread(&m, sizeof(Marca), 1, arq);
-            printf("\n%s ja esta cadastrada", m.nomeMarca);
+            printf("\n%s ja esta cadastrado(a)", m.nomeMarca);
             system("pause");
         }
         system("cls");
@@ -277,6 +277,7 @@ void Cadastro_marcas() {
 void Cadastro_categorias() {
     FILE *arq;
     Categoria c;
+    char nomeBusca[50];
     int pos;
     arq = fopen("categorias.bin", "ab+");
     if (arq == NULL) {
@@ -285,18 +286,19 @@ void Cadastro_categorias() {
     }
     do {
         system("cls");
-        printf("\nNome da categoria: "); fflush(stdin);
-        gets(c.nomeCat);
-        pos = buscaCategoria(arq, c.nomeCat);
+        printf("\nNome: "); fflush(stdin);
+        gets(nomeBusca);
+        pos = buscaCategoria(arq, nomeBusca);
         if (pos == -1) {
-            printf("\nID da categoria: ");
+            strcpy(c.nomeCat, nomeBusca);
+            printf("\nCodigo: ");
             scanf("%d", &c.id);
             fseek(arq, 0, SEEK_END);
             fwrite(&c, sizeof(Categoria), 1, arq);
         } else {
             fseek(arq, pos, 0);
             fread(&c, sizeof(Categoria), 1, arq);
-            printf("\n%s ja esta cadastrada", c.nomeCat);
+            printf("\n%s ja esta cadastrado(a)", c.nomeCat);
             system("pause");
         }
         system("cls");
@@ -468,6 +470,7 @@ void listarMarcas() {
     printf("\n========================================\n");
     fread(&m, sizeof(Marca), 1, arq);
     while (!feof(arq)) {
+        printf("\nID:   %d", m.id);
         printf("\nNome: %s", m.nomeMarca);
         printf("\n----------------------------------------\n");
         achou = 1;
@@ -492,6 +495,7 @@ void listarCategorias() {
     printf("\n========================================\n");
     fread(&c, sizeof(Categoria), 1, arq);
     while (!feof(arq)) {
+        printf("\nID:   %d", c.id);
         printf("\nNome: %s", c.nomeCat);
         printf("\n----------------------------------------\n");
         achou = 1;
@@ -773,7 +777,7 @@ void editaMarca() {
 
 void atualizaStatus_pedido() {
     Pedido p;
-    int pos;
+    int pos, op;
     FILE *arq;
     arq = fopen("pedidos.bin", "rb+");
     if (arq == NULL) { printf("\nErro no arquivo"); return; }
@@ -905,6 +909,7 @@ void excluiCategoria() {
         fread(&c, sizeof(Categoria), 1, arq);
         printf("\n=====================\n");
         printf("\nNome: %s", c.nomeCat);
+        printf("\nID: %d", c.id);
         printf("\nDeseja Excluir: (S/N) ");
         if (toupper(getche()) == 'S') {
             temp = fopen("aux.bin", "wb");
@@ -944,6 +949,7 @@ void excluiMarca() {
         fread(&m, sizeof(Marca), 1, arq);
         printf("\n=====================\n");
         printf("\nNome: %s", m.nomeMarca);
+        printf("\nID: %d", m.id);
         printf("\nDeseja Excluir: (S/N) ");
         if (toupper(getche()) == 'S') {
             temp = fopen("aux.bin", "wb");
@@ -1322,12 +1328,55 @@ int main() {
                         case 1: Cadastro_produto(); break;
                         case 2: listarProdutos();   break;
                         case 3: editaProduto();     break;
+                        case 4: break;
                         default: if(opProd!=0) printf("\nOpcao Invalida"); break;
                     }
                 } while (opProd != 0);
                 break;
             }
             case 3: {
+                int opMarca;
+                do {
+                    system("cls");
+                    printf("\n=== GERENCIAR MARCAS ===\n");
+                    printf("\n1-Cadastrar marca");
+                    printf("\n2-Listar marcas");
+                    printf("\n3-Editar marca");
+                    printf("\n4-Excluir marca");
+                    printf("\n0-Voltar\n");
+                    scanf("%d", &opMarca);
+                    switch (opMarca) {
+                        case 1: Cadastro_marcas(); break;
+                        case 2: listarMarcas();    break;
+                        case 3: editaMarca();      break;
+                        case 4: excluiMarca();     break;
+                        default: if(opMarca!=0) printf("\nOpcao Invalida"); break;
+                    }
+                } while (opMarca != 0);
+                break;
+            }
+            case 4: {
+                int opCat;
+                do {
+                    system("cls");
+                    printf("\n=== GERENCIAR CATEGORIAS ===\n");
+                    printf("\n1-Cadastrar categoria");
+                    printf("\n2-Listar categorias");
+                    printf("\n3-Editar categoria");
+                    printf("\n4-Excluir categoria");
+                    printf("\n0-Voltar\n");
+                    scanf("%d", &opCat);
+                    switch (opCat) {
+                        case 1: Cadastro_categorias(); break;
+                        case 2: listarCategorias();    break;
+                        case 3: editaCategoria();      break;
+                        case 4: excluiCategoria();     break;
+                        default: if(opCat!=0) printf("\nOpcao Invalida"); break;
+                    }
+                } while (opCat != 0);
+                break;
+            }
+            case 5: {
                 int opPed;
                 do {
                     system("cls");
@@ -1348,7 +1397,7 @@ int main() {
                 } while (opPed != 0);
                 break;
             }
-            case 4: {
+            case 6: {
                 int opRel;
                 do {
                     system("cls");
@@ -1369,10 +1418,6 @@ int main() {
                         default: if(opRel!=0) printf("\nOpcao Invalida"); break;
                     }
                 } while (opRel != 0);
-                break;
-            }
-            case 5:{
-                printf("\nSaindo...");
                 break;
             }
             default:
