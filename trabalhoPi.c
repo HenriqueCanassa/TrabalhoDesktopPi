@@ -1011,6 +1011,50 @@ void excluiPedido() {
     system("cls");
 }
 
+void excluiProduto() {
+    FILE *arq, *temp;
+    Produto p;
+    int pos;
+    char nome[50];
+    arq = fopen("produtos.bin", "rb");
+    if (arq == NULL) { printf("\nErro no arquivo"); return; }
+    system("cls");
+    printf("\nInforme o nome do produto a excluir: "); fflush(stdin);
+    gets(nome);
+    pos = buscaProduto(arq, nome);
+    if (pos == -1) {
+        printf("\nRegistro nao encontrado");
+    } else {
+        fseek(arq, pos, 0);
+        fread(&p, sizeof(Produto), 1, arq);
+        printf("\n=====================\n");
+        printf("\nCodigo:    %d", p.id);
+        printf("\nNome:      %s", p.nomeProd);
+        printf("\nEstoque:   %d", p.estoque);
+        printf("\nPreco:     R$ %.2f", p.preco);
+        printf("\nMarca:     %s", p.m.nomeMarca);
+        printf("\nCategoria: %s", p.c.nomeCat);
+        printf("\nDeseja Excluir: (S/N) ");
+        if (toupper(getche()) == 'S') {
+            temp = fopen("aux.bin", "wb");
+            rewind(arq);
+            while (fread(&p, sizeof(Produto), 1, arq) == 1) {
+                if (strcmp(nome, p.nomeProd) != 0)
+                    fwrite(&p, sizeof(Produto), 1, temp);
+            }
+            fclose(temp);
+            fclose(arq);
+            remove("produtos.bin");
+            rename("aux.bin", "produtos.bin");
+            printf("\nProduto excluido com sucesso!");
+        } else {
+            fclose(arq);
+        }
+    }
+    getchar();
+    system("cls");
+}
+
 
 void relatorioSociosVencendo() {
     FILE *arq;
@@ -1322,6 +1366,7 @@ int main() {
                         case 1: Cadastro_produto(); break;
                         case 2: listarProdutos();   break;
                         case 3: editaProduto();     break;
+                        case 4: excluiProduto();    break;
                         default: if(opProd!=0) printf("\nOpcao Invalida"); break;
                     }
                 } while (opProd != 0);
